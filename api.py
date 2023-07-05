@@ -35,27 +35,68 @@ def signin(username, password, device_id):
     return response
 
 
+def find_symbol(f_token_spec):
+    """ This implementation assumes '-' will never be used as the splitting symbol, and allows
+    for multiple (2+) non-alphanumeric characters to be used as the splitting symbol.
+    """
+
+
+    # Initialize variables
+    symbol_start = -1
+    symbol_end = -1
+
+    # Iterate over the characters in the specification string
+    for i, char in enumerate(f_token_spec):
+        if not char.isalnum() and char != '-':
+            # If this is the first non-alphanumeric character, set symbol_start
+            if symbol_start == -1:
+                symbol_start = i
+            # Update symbol_end
+            symbol_end = i
+        else:
+            # If we have found a sequence of non-alphanumeric characters, break the loop
+            if symbol_start != -1:
+                break
+
+    # If we have found a sequence of non-alphanumeric characters, return it as the symbol
+    if symbol_start != -1:
+        return f_token_spec[symbol_start:symbol_end + 1]
+    else:
+        raise Exception('invalid f-token-spec')
+
+
 def extract_f_token(f_token_spec, username, f_request_id, device_id):
-    """
-    Preconditions:
-        - f-token-spec is decoded
-        - f-token-spec contains placeholders for api-key, username, and last-request-id
-    """
-    values = {
-        'api-key': API_KEY,
+    var_dict = {
         'username': username,
         'last-request-id': f_request_id,
-        'device-id': device_id
+        'device-id': device_id,
+        'api-key': API_KEY
     }
-    placeholder_pattern = re.compile(r'(api-key|username|last-request-id|device-id)')
-    placeholders = placeholder_pattern.findall(f_token_spec)
-    encoded_f_token = f_token_spec
-    for placeholder in placeholders:
-        encoded_f_token = encoded_f_token.replace(placeholder, values[placeholder], 1)
-    hash_value = hashlib.sha256(encoded_f_token.encode()).digest()
-    encoded_hash = base64.b64encode(hash_value).decode()
 
-    return encoded_hash
+    # Decode f-token-spec with base64
+    f_token_spec = base64.b64decode(f_token_spec).decode('utf-8')
+
+    # Remove the encryption method from the f-token-spec
+    cleaned_f_token_spec = f_token_spec[15:len(f_token_spec) - 1]
+
+    symbol = find_symbol(cleaned_f_token_spec)
+
+    spec_parts = cleaned_f_token_spec.split(symbol)
+
+    final_string = ''
+    for part in spec_parts:
+        if part in var_dict:
+            final_string += str(var_dict[part])
+            if part != spec_parts[-1]:
+                final_string += symbol
+        else:
+            continue
+
+    print(final_string)
+    # encrypt the final string with sha256 followed by base64
+    final_string = base64.b64encode(hashlib.sha256(final_string.encode('utf-8')).digest()).decode('utf-8')
+
+    return final_string
 
 
 def request_mfa_method(teller_mission, api_key, device_id, r_token, f_token, method_id):
@@ -73,7 +114,7 @@ def request_mfa_method(teller_mission, api_key, device_id, r_token, f_token, met
         'accept': 'application/json'
     }
     payload = {
-        "method_id": method_id
+        "device_id": method_id
     }
     response = requests.post(API_BASE_URL + '/signin/mfa', headers=headers, json=json.dumps(payload))
     return response
@@ -81,16 +122,20 @@ def request_mfa_method(teller_mission, api_key, device_id, r_token, f_token, met
 
 if __name__ == '__main__':
     device_id = input("Enter your device ID: ")
-    username = input("Enter your username: ")
-    password = input("Enter your password: ")
+    # username = input("Enter your username: ")
+    # password = input("Enter your password: ")
+    username = "black_max"
+    password = "iran"
     response = signin(username, password, device_id)
     print(response)
+    print(response.headers)
     f_token = extract_f_token(response.headers['f-token-spec'], username, response.headers['f-request-id'], device_id)
     print(f_token)
     mfa_type = int(input("Enter your MFA type (SMS - 0 or VOICE - 1): "))
     response_json = response.json()
+    print(response_json["data"]["devices"][mfa_type]["id"])
     response = request_mfa_method(response.headers['teller-mission'], API_KEY, device_id, response.headers['r-token'], f_token, response_json["data"]["devices"][mfa_type]["id"])
-    print(response)
+    print(response.json())
 
 
 

@@ -1,0 +1,5 @@
+sha-256-b64-np(device-id:last-request-id:api-key)
+sha-256-b64-np(api-key|device-id|username)
+sha-256-b64-np(last-request-id&device-id&username)
+sha-256-b64-np(last-request-id--username--api-key)
+sha-256-b64-np(api-key::device-id::last-request-id)
