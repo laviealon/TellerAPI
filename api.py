@@ -11,7 +11,28 @@ api_base_url = 'https://test.teller.engineering'
 ======== SIGNIN FLOW ========
 (1) POST /signin with credentials
 (2) receive f-token-spec, decode with base64, check for how to decode f-token using API key, username, and f-request-id
+(3) POST /signin/mfa with selection, f-token, r-token, device id
+(4) repeat step 2
 '''
+
+
+def signin(username, password, device_id):
+    headers = {
+        'user-agent': 'Teller Bank iOS 2.0',
+        'api-key': 'HowManyGenServersDoesItTakeToCrackTheBank?',
+        'device-id': device_id,
+        'content-type': 'application/json',
+        'accept': 'application/json'
+    }
+    payload = {
+        "password": password,
+        "username": username
+    }
+    response = requests.post(api_base_url + '/signin', headers=headers, json=payload)
+    if response.status_code == 200:
+        return response.json()
+    else:
+        raise Exception('Signin failed with status code: ' + str(response.status_code))
 
 
 def extract_f_token(f_token_spec, api_key, username, f_request_id):
@@ -34,6 +55,8 @@ def extract_f_token(f_token_spec, api_key, username, f_request_id):
     encoded_hash = base64.b64encode(hash_value).decode()
 
     return encoded_hash
+
+def request_mfa_method()
 
 
 
