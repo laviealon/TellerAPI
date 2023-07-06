@@ -1,6 +1,5 @@
 import base64
 import hashlib
-from typing import Dict
 
 import requests
 
@@ -25,6 +24,9 @@ class Credentials:
         self.device_id = device_id
         self.r_token = r_token
         self.f_token = f_token
+
+    def __str__(self):
+        return self.teller_mission + ' ' + self.user_agent + ' ' + self.api_key + ' ' + self.device_id + ' ' + self.r_token + ' ' + self.f_token
 
 def signin(username, password, device_id):
     headers = {
@@ -149,25 +151,74 @@ def verify_mfa(credentials, mfa_code):
     return requests.post(API_BASE_URL + '/signin/mfa/verify', headers=headers, json=payload)
 
 
+def get_details(credentials, s_token, account_id):
+    headers = {
+        'teller-mission': teller_mission_check(credentials.teller_mission),
+        'user-agent': credentials.user_agent,
+        'api-key': credentials.api_key,
+        'device-id': credentials.device_id,
+        'r-token': credentials.r_token,
+        'f-token': credentials.f_token,
+        's-token': s_token,
+        'accept': 'application/json'
+    }
+    return requests.get(API_BASE_URL + '/accounts/' + account_id + '/details', headers=headers)
+
+
+def get_transactions(credentials, s_token, account_id):
+    headers = {
+        'teller-mission': teller_mission_check(credentials.teller_mission),
+        'user-agent': credentials.user_agent,
+        'api-key': credentials.api_key,
+        'device-id': credentials.device_id,
+        'r-token': credentials.r_token,
+        'f-token': credentials.f_token,
+        's-token': s_token,
+        'accept': 'application/json'
+    }
+    return requests.get(API_BASE_URL + '/accounts/' + account_id + '/transactions', headers=headers)
+
+
+def get_balances(credentials, s_token, account_id):
+    headers = {
+        'teller-mission': teller_mission_check(credentials.teller_mission),
+        'user-agent': credentials.user_agent,
+        'api-key': credentials.api_key,
+        'device-id': credentials.device_id,
+        'r-token': credentials.r_token,
+        'f-token': credentials.f_token,
+        's-token': s_token,
+        'accept': 'application/json'
+    }
+    return requests.get(API_BASE_URL + '/accounts/' + account_id + '/balances', headers=headers)
+
+
 if __name__ == '__main__':
     device_id = input("Enter your device ID: ")
     username = "black_max"
     password = "iran"
     response = signin(username, password, device_id)
-    print(response.headers)
-    print(response.json())
-    print(base64.b64decode(response.headers['f-token-spec']).decode('utf-8'))
     f_token = extract_f_token(response.headers['f-token-spec'], username, response.headers['f-request-id'], device_id, API_KEY)
     mfa_type = int(input("Enter your MFA type (SMS - 0 or VOICE - 1): "))
     response_json = response.json()
     credentials = Credentials(response.headers['teller-mission'], USER_AGENT, API_KEY, device_id, response.headers['r-token'], f_token)
     response = request_mfa_method(credentials, response_json["data"]["devices"][mfa_type]["id"])
-    print(response.headers)
-    print(response.json())
     f_token = extract_f_token(response.headers['f-token-spec'], username, response.headers['f-request-id'], device_id, API_KEY)
     mfa_code = input("Enter your MFA code: ")
     credentials = Credentials(response.headers['teller-mission'], USER_AGENT, API_KEY, device_id, response.headers['r-token'], f_token)
     response = verify_mfa(credentials, mfa_code)
+    f_token = extract_f_token(response.headers['f-token-spec'], username, response.headers['f-request-id'], device_id,
+                              API_KEY)
+    credentials = Credentials(response.headers['teller-mission'], USER_AGENT, API_KEY, device_id,
+                              response.headers['r-token'], f_token)
+    print(credentials)
+    s_token = response.headers['s-token']
+    print(s_token)
+    account_id = response.json()['data']['accounts']['checking'][0]['id']
+    print(account_id)
+    response = get_balances(credentials, s_token, account_id)
+    print(response.json())
+    response = get_transactions(credentials, s_token, account_id)
     print(response.json())
 
 
