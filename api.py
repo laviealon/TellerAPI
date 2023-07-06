@@ -6,6 +6,7 @@ import requests
 API_BASE_URL = 'https://test.teller.engineering'
 USER_AGENT = 'Teller Bank iOS 2.0'
 API_KEY = 'HowManyGenServersDoesItTakeToCrackTheBank?'
+MFA_CODE = '123456'
 
 
 '''
