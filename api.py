@@ -8,14 +8,6 @@ USER_AGENT = 'Teller Bank iOS 2.0'
 API_KEY = 'HowManyGenServersDoesItTakeToCrackTheBank?'
 MFA_CODE = '123456'
 
-
-'''
-======== SIGNIN FLOW ========
-(1) POST /signin with credentials
-(2) receive f-token-spec, decode with base64, check for how to decode f-token using API key, username, and f-request-id
-(3) POST /signin/mfa with selection, f-token, r-token, device id
-(4) repeat step 2
-'''
 class Credentials:
     def __init__(self, teller_mission, user_agent, api_key, device_id, r_token, f_token):
         self.teller_mission = teller_mission

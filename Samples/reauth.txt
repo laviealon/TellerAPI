@@ -1,0 +1,9 @@
+POST /signin/token
+user-agent: Teller Bank iOS 2.0
+api-key: HowManyGenServersDoesItTakeToCrackTheBank?
+device-id: G4VHJWXP65EUWOCU
+content-type: application/json
+accept: application/json
+{
+  "token": "QTEyOEdDTQ.Qq6ED5DBYMBj-UN36ME4x990M72laOCyQAXVzbOsHXyzTgY_Vm7cBdgOozQ.c_WFfyO55oShn7Ak.cSgFr_Wf0Fvxh1W4YaMHFBoryvNa8Wd29oN_K6rgdT5vvhj8o16Ys9o.c0sJFGDKTZbZ7e7-xxSr8Q"
+}
