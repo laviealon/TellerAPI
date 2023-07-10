@@ -1,6 +1,5 @@
 import base64
 import hashlib
-
 import requests
 
 API_BASE_URL = 'https://test.teller.engineering'
@@ -19,6 +18,7 @@ class Credentials:
 
     def __str__(self):
         return self.teller_mission + ' ' + self.user_agent + ' ' + self.api_key + ' ' + self.device_id + ' ' + self.r_token + ' ' + self.f_token
+
 
 def signin(username, password, device_id):
     headers = {
@@ -185,6 +185,20 @@ def get_balances(credentials, s_token, account_id):
     return requests.get(API_BASE_URL + '/accounts/' + account_id + '/balances', headers=headers)
 
 
+def reauthenticate(credentials, a_token):
+    headers = {
+        'user-agent': credentials.user_agent,
+        'api-key': credentials.api_key,
+        'device-id': credentials.device_id,
+        'content-type': 'application/json',
+        'accept': 'application/json'
+    }
+    payload = {
+        "token": a_token
+    }
+    return requests.post(API_BASE_URL + '/signin/token', headers=headers, json=payload)
+
+
 if __name__ == '__main__':
     device_id = input("Enter your device ID: ")
     username = "black_max"
@@ -208,11 +222,11 @@ if __name__ == '__main__':
     print(s_token)
     account_id = response.json()['data']['accounts']['checking'][0]['id']
     print(account_id)
-    response = get_balances(credentials, s_token, account_id)
     print(response.json())
-    response = get_transactions(credentials, s_token, account_id)
+    print(response.json()['data']['enc_key'])
+    response = reauthenticate(credentials, response.json()['data']['a_token'])
     print(response.json())
-
-
-
-
+    # response = get_balances(credentials, s_token, account_id)
+    # print(response.json())
+    # response = get_transactions(credentials, s_token, account_id)
+    # print(response.json())
