@@ -7,15 +7,11 @@ app = Flask(__name__)
 
 @app.route('/signin', methods=['POST'])
 def signin():
-    username = request.form['username']
-    password = request.form['password']
-    device_id = request.form['device_id']
+    username = request.json.get('username')
+    password = request.json.get('password')
+    device_id = request.json.get('device_id')
     response = teller_api.signin(username, password, device_id)
-    token_body = response.headers['teller-mission'] + ':' + response.headers['f-request-id'] + ':' + response.headers['r-token'] + ':' + response.headers['f-token-spec'] + ':' + username + ':' + device_id + ':' + response.json()["data"]["devices"][0]["id"] + ':' + response.json()["data"]["devices"][1]["id"]
-    session_token = zlib.compress(token_body.encode('utf-8'))
-    return jsonify({
-        'session_token': session_token,
-    })
+    return response.json()
 
 
 @app.route('/signin/mfa/<method>/<session_token>', methods=['POST'])
@@ -38,7 +34,7 @@ def mfa_verify(method, session_token):
     })
 
 
-@app.route('signin/mfa/verify/<code>/<session_token>', methods=['POST'])
+@app.route('/signin/mfa/verify/<code>/<session_token>', methods=['POST'])
 def mfa_verify_code(code, session_token):
     session_token = zlib.decompress(session_token).decode('utf-8').split(':')
     credentials = teller_api.Credentials(
@@ -55,15 +51,6 @@ def mfa_verify_code(code, session_token):
     return jsonify({
         'session_token': session_token,
     })
-
-
-@app.route('/accounts/<account_id>/details')
-
-@app.route('/accounts/<account_id>/transactions')
-
-@app.route('/accounts/<account_id>/balances')
-
-@app.route('/reauth')
 
 
 
