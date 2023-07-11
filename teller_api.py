@@ -1,14 +1,18 @@
 import base64
 import hashlib
 import requests
+from flask import Flask, request
+
+# app = Flask(__name__)
 
 API_BASE_URL = 'https://test.teller.engineering'
 USER_AGENT = 'Teller Bank iOS 2.0'
 API_KEY = 'HowManyGenServersDoesItTakeToCrackTheBank?'
 MFA_CODE = '123456'
 
+
 class Credentials:
-    def __init__(self, teller_mission, user_agent, api_key, device_id, r_token, f_token):
+    def __init__(self, teller_mission, user_agent, api_key, device_id, r_token=None, f_token=None):
         self.teller_mission = teller_mission
         self.user_agent = user_agent
         self.api_key = api_key
@@ -20,6 +24,7 @@ class Credentials:
         return self.teller_mission + ' ' + self.user_agent + ' ' + self.api_key + ' ' + self.device_id + ' ' + self.r_token + ' ' + self.f_token
 
 
+# @app.route('/signin/<username>/<password>/<device_id>', methods=['POST'])
 def signin(username, password, device_id):
     headers = {
         'user-agent': USER_AGENT,
@@ -32,8 +37,7 @@ def signin(username, password, device_id):
         "password": password,
         "username": username
     }
-    print(headers, payload)
-    response = requests.post(API_BASE_URL + '/signin', headers=headers, json=payload)
+    response = requests.request("POST", API_BASE_URL + '/signin', headers=headers, data=payload)
     return response
 
 
@@ -204,29 +208,30 @@ if __name__ == '__main__':
     username = "black_max"
     password = "iran"
     response = signin(username, password, device_id)
-    f_token = extract_f_token(response.headers['f-token-spec'], username, response.headers['f-request-id'], device_id, API_KEY)
-    mfa_type = int(input("Enter your MFA type (SMS - 0 or VOICE - 1): "))
-    response_json = response.json()
-    credentials = Credentials(response.headers['teller-mission'], USER_AGENT, API_KEY, device_id, response.headers['r-token'], f_token)
-    response = request_mfa_method(credentials, response_json["data"]["devices"][mfa_type]["id"])
-    f_token = extract_f_token(response.headers['f-token-spec'], username, response.headers['f-request-id'], device_id, API_KEY)
-    mfa_code = input("Enter your MFA code: ")
-    credentials = Credentials(response.headers['teller-mission'], USER_AGENT, API_KEY, device_id, response.headers['r-token'], f_token)
-    response = verify_mfa(credentials, mfa_code)
-    f_token = extract_f_token(response.headers['f-token-spec'], username, response.headers['f-request-id'], device_id,
-                              API_KEY)
-    credentials = Credentials(response.headers['teller-mission'], USER_AGENT, API_KEY, device_id,
-                              response.headers['r-token'], f_token)
-    print(credentials)
-    s_token = response.headers['s-token']
-    print(s_token)
-    account_id = response.json()['data']['accounts']['checking'][0]['id']
-    print(account_id)
     print(response.json())
-    print(response.json()['data']['enc_key'])
-    response = reauthenticate(credentials, response.json()['data']['a_token'])
-    print(response.json())
+    # f_token = extract_f_token(response.headers['f-token-spec'], username, response.headers['f-request-id'], device_id, API_KEY)
+    # mfa_type = int(input("Enter your MFA type (SMS - 0 or VOICE - 1): "))
+    # response_json = response.json()
+    # credentials = Credentials(response.headers['teller-mission'], USER_AGENT, API_KEY, device_id, response.headers['r-token'], f_token)
+    # response = request_mfa_method(credentials, response_json["data"]["devices"][mfa_type]["id"])
+    # f_token = extract_f_token(response.headers['f-token-spec'], username, response.headers['f-request-id'], device_id, API_KEY)
+    # mfa_code = input("Enter your MFA code: ")
+    # credentials = Credentials(response.headers['teller-mission'], USER_AGENT, API_KEY, device_id, response.headers['r-token'], f_token)
+    # response = verify_mfa(credentials, mfa_code)
+    # f_token = extract_f_token(response.headers['f-token-spec'], username, response.headers['f-request-id'], device_id,
+    #                           API_KEY)
+    # credentials = Credentials(response.headers['teller-mission'], USER_AGENT, API_KEY, device_id,
+    #                           response.headers['r-token'], f_token)
+    # print(credentials)
+    # s_token = response.headers['s-token']
+    # account_id = response.json()['data']['accounts']['checking'][0]['id']
+    # print(account_id)
+    # print(response.json())
+    # print(response.json()['data']['enc_key'])
+    # response = reauthenticate(credentials, response.json()['data']['a_token'])
+    # print(response.json())
     # response = get_balances(credentials, s_token, account_id)
     # print(response.json())
     # response = get_transactions(credentials, s_token, account_id)
     # print(response.json())
+    # app.run(debug=True)
