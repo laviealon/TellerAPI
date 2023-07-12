@@ -4,17 +4,18 @@ class Credentials:
     information that must persist between requests. For example, a user's password is not stored in a
     credentials object because it is only needed for the initial request to sign in.
 
-    Attributes necessary for reauthentication (main.get_accounts):
-        - user_agent (str): The user-agent header from the previous request.
-        - api_key (str): The API key from the previous request.
-        - device_id (str): The device ID from the previous request.
-    Attributes necessary for all other requests:
-        - teller_mission (str): The teller-mission header from the previous request.
-        - user_agent (str): The user-agent header from the previous request.
-        - api_key (str): The API key from the previous request.
-        - device_id (str): The device ID from the previous request.
-        - r_token (str): The r-token header from the previous request.
-        - f_token (str): The f-token header from the previous request.
+    General attributes:
+        teller_mission (str): The teller mission header.
+        f_token (str): The f-token header.
+        r_token (str): The r-token header.
+        s_token (str): The s-token header.
+        a_token (str): The a-token header.
+        username (str): The username of the user.
+        device_id (str): The device id of the user.
+        mfa_id (str): The mfa id of the user.
+
+
+
     """
     def __init__(self, **kwargs):
         for key, value in kwargs.items():
@@ -29,7 +30,7 @@ class Credentials:
     def __setattr__(self, key, value):
         super().__setattr__(key, value)
 
-    def update(self, **kwargs):
+    def update(self, response=None, **kwargs):
         for key, value in kwargs.items():
             setattr(self, key, value)
 
