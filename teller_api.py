@@ -10,19 +10,6 @@ USER_AGENT = 'Teller Bank iOS 2.0'
 API_KEY = 'HowManyGenServersDoesItTakeToCrackTheBank?'
 MFA_CODE = '123456'
 
-class Credentials:
-    def __init__(self, teller_mission, user_agent, api_key, device_id, r_token, f_token):
-        self.teller_mission = teller_mission
-        self.user_agent = user_agent
-        self.api_key = api_key
-        self.device_id = device_id
-        self.r_token = r_token
-        self.f_token = f_token
-
-    def __str__(self):
-        return self.teller_mission + ' ' + self.user_agent + ' ' + self.api_key + ' ' + self.device_id + ' ' + self.r_token + ' ' + self.f_token
-
-
 def signin(username, password, device_id):
     headers = {
         'user-agent': USER_AGENT,
