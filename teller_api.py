@@ -6,21 +6,19 @@ from flask import Flask
 app = Flask(__name__)
 
 API_BASE_URL = 'https://test.teller.engineering'
-USER_AGENT = 'Teller Bank iOS 2.0'
-API_KEY = 'HowManyGenServersDoesItTakeToCrackTheBank?'
 MFA_CODE = '123456'
 
-def signin(username, password, device_id):
+def signin(credentials, password):
     headers = {
-        'user-agent': USER_AGENT,
-        'api-key': API_KEY,
-        'device-id': device_id,
+        'user-agent': credentials.user_agent,
+        'api-key': credentials.api_key,
+        'device-id': credentials.device_id,
         'content-type': 'application/json',
         'accept': 'application/json'
     }
     payload = {
         "password": password,
-        "username": username
+        "username": credentials.username
     }
     response = requests.post(API_BASE_URL + '/signin', headers=headers, json=payload)
     return response
@@ -146,7 +144,7 @@ def get_details(credentials, s_token, account_id):
     return requests.get(API_BASE_URL + '/accounts/' + account_id + '/details', headers=headers)
 
 
-def get_transactions(credentials, s_token, account_id):
+def get_transactions(credentials, account_id):
     headers = {
         'teller-mission': teller_mission_check(credentials.teller_mission),
         'user-agent': credentials.user_agent,
@@ -154,13 +152,13 @@ def get_transactions(credentials, s_token, account_id):
         'device-id': credentials.device_id,
         'r-token': credentials.r_token,
         'f-token': credentials.f_token,
-        's-token': s_token,
+        's-token': credentials.s_token,
         'accept': 'application/json'
     }
     return requests.get(API_BASE_URL + '/accounts/' + account_id + '/transactions', headers=headers)
 
 
-def get_balances(credentials, s_token, account_id):
+def get_balances(credentials, account_id):
     headers = {
         'teller-mission': teller_mission_check(credentials.teller_mission),
         'user-agent': credentials.user_agent,
@@ -168,13 +166,13 @@ def get_balances(credentials, s_token, account_id):
         'device-id': credentials.device_id,
         'r-token': credentials.r_token,
         'f-token': credentials.f_token,
-        's-token': s_token,
+        's-token': credentials.s_token,
         'accept': 'application/json'
     }
     return requests.get(API_BASE_URL + '/accounts/' + account_id + '/balances', headers=headers)
 
 
-def reauthenticate(credentials, a_token):
+def reauthenticate(credentials):
     headers = {
         'user-agent': credentials.user_agent,
         'api-key': credentials.api_key,
@@ -183,7 +181,7 @@ def reauthenticate(credentials, a_token):
         'accept': 'application/json'
     }
     payload = {
-        "token": a_token
+        "token": credentials.a_token
     }
     return requests.post(API_BASE_URL + '/signin/token', headers=headers, json=payload)
 

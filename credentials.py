@@ -1,7 +1,8 @@
 class Credentials:
     """A credentials object to hold all the necessary information to make a request to the Teller API.
-    Some attributes may be redundant depending on the request being made. Credentials objects are only
-    used after the initial sign-in request.
+    Some attributes may be redundant depending on the request being made. Credentials objects only store
+    information that must persist between requests. For example, a user's password is not stored in a
+    credentials object because it is only needed for the initial request to sign in.
 
     Attributes necessary for reauthentication (main.get_accounts):
         - user_agent (str): The user-agent header from the previous request.
@@ -24,3 +25,6 @@ class Credentials:
         for key, value in self.__dict__.items():
             s += f'{key}: {value}\n'
         return s
+
+    def __setattr__(self, key, value):
+        super().__setattr__(key, value)
