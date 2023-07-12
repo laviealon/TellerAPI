@@ -47,13 +47,14 @@ def mfa_verify_code():
                                                  response.headers['f-request-id'], credentials.device_id,
                                                  teller.API_KEY),
         r_token=response.headers['r-token'],
+        s_token=response.headers['s-token'],
         a_token=response.json()['data']['a_token']
     )
     return {'status': 'success'}
 
 
 @app.route('/accounts', methods=['GET'])
-def get_accounts(verbose):
+def get_accounts():
     response = teller.reauthenticate(credentials)
     credentials.update(
         teller_mission=response.headers['teller-mission'],
