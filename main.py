@@ -49,11 +49,11 @@ def mfa_verify_code():
         r_token=response.headers['r-token'],
         a_token=response.json()['data']['a_token']
     )
-    return response.json()
+    return {'status': 'success'}
 
 
 @app.route('/accounts', methods=['GET'])
-def get_accounts():
+def get_accounts(verbose):
     response = teller.reauthenticate(credentials)
     credentials.update(
         teller_mission=response.headers['teller-mission'],
