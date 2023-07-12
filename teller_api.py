@@ -6,12 +6,13 @@ from flask import Flask
 app = Flask(__name__)
 
 API_BASE_URL = 'https://test.teller.engineering'
-MFA_CODE = '123456'
+USER_AGENT = 'Teller Bank iOS 2.0'
+API_KEY = 'HowManyGenServersDoesItTakeToCrackTheBank?'
 
 def signin(credentials, password):
     headers = {
-        'user-agent': credentials.user_agent,
-        'api-key': credentials.api_key,
+        'user-agent': USER_AGENT,
+        'api-key': API_KEY,
         'device-id': credentials.device_id,
         'content-type': 'application/json',
         'accept': 'application/json'
@@ -91,8 +92,8 @@ def extract_f_token(f_token_spec, username, f_request_id, device_id, api_key):
 def request_mfa_method(credentials, method_id):
     headers = {
         'teller-mission': teller_mission_check(credentials.teller_mission),
-        'user-agent': credentials.user_agent,
-        'api-key': credentials.api_key,
+        'user-agent': USER_AGENT,
+        'api-key': API_KEY,
         'device-id': credentials.device_id,
         'r-token': credentials.r_token,
         'f-token': credentials.f_token,
@@ -116,8 +117,8 @@ def teller_mission_check(teller_mission):
 def verify_mfa(credentials, mfa_code):
     headers = {
         'teller-mission': teller_mission_check(credentials.teller_mission),
-        'user-agent': credentials.user_agent,
-        'api-key': credentials.api_key,
+        'user-agent': USER_AGENT,
+        'api-key': API_KEY,
         'device-id': credentials.device_id,
         'r-token': credentials.r_token,
         'f-token': credentials.f_token,
@@ -130,25 +131,11 @@ def verify_mfa(credentials, mfa_code):
     return requests.post(API_BASE_URL + '/signin/mfa/verify', headers=headers, json=payload)
 
 
-def get_details(credentials, s_token, account_id):
-    headers = {
-        'teller-mission': teller_mission_check(credentials.teller_mission),
-        'user-agent': credentials.user_agent,
-        'api-key': credentials.api_key,
-        'device-id': credentials.device_id,
-        'r-token': credentials.r_token,
-        'f-token': credentials.f_token,
-        's-token': s_token,
-        'accept': 'application/json'
-    }
-    return requests.get(API_BASE_URL + '/accounts/' + account_id + '/details', headers=headers)
-
-
 def get_transactions(credentials, account_id):
     headers = {
         'teller-mission': teller_mission_check(credentials.teller_mission),
-        'user-agent': credentials.user_agent,
-        'api-key': credentials.api_key,
+        'user-agent': USER_AGENT,
+        'api-key': API_KEY,
         'device-id': credentials.device_id,
         'r-token': credentials.r_token,
         'f-token': credentials.f_token,
@@ -161,8 +148,8 @@ def get_transactions(credentials, account_id):
 def get_balances(credentials, account_id):
     headers = {
         'teller-mission': teller_mission_check(credentials.teller_mission),
-        'user-agent': credentials.user_agent,
-        'api-key': credentials.api_key,
+        'user-agent': USER_AGENT,
+        'api-key': API_KEY,
         'device-id': credentials.device_id,
         'r-token': credentials.r_token,
         'f-token': credentials.f_token,
@@ -174,8 +161,8 @@ def get_balances(credentials, account_id):
 
 def reauthenticate(credentials):
     headers = {
-        'user-agent': credentials.user_agent,
-        'api-key': credentials.api_key,
+        'user-agent': USER_AGENT,
+        'api-key': API_KEY,
         'device-id': credentials.device_id,
         'content-type': 'application/json',
         'accept': 'application/json'
