@@ -28,3 +28,8 @@ class Credentials:
 
     def __setattr__(self, key, value):
         super().__setattr__(key, value)
+
+    def update(self, **kwargs):
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
