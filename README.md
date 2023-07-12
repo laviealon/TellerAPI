@@ -44,6 +44,10 @@ req = {
 
 The signin flow **must** be followed in order (```signin → mfa → verify → accounts```). Once the user has signed in, the session is authenticated, and they can access account information. After the session times out, they must hit the ```accounts``` endpoint.
 
+### Testing
+
+The test module can be run and provides the basic API calls.
+
 ## Design
 
 There are a few features of the application that are worth noting:
