@@ -32,3 +32,5 @@ if __name__ == '__main__':
     print(response.text)
     response = requests.get('http://127.0.0.1:5000/accounts/acc_oal57fitxo2cl6lgicllypdjxm5jowzokb3cxgq/balances')
     print(response.text)
+    response = requests.get('http://127.0.0.1:5000/accounts/acc_oal57fitxo2cl6lgicllypdjxm5jowzokb3cxgq/details')
+    print(response.text)

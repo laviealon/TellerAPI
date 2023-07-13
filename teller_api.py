@@ -88,6 +88,20 @@ def get_balances(credentials, account_id):
     return requests.get(API_BASE_URL + '/accounts/' + account_id + '/balances', headers=headers)
 
 
+def get_details(credentials, account_id):
+    headers = {
+        'teller-mission': _teller_mission_check(credentials.teller_mission),
+        'user-agent': USER_AGENT,
+        'api-key': API_KEY,
+        'device-id': credentials.device_id,
+        'r-token': credentials.r_token,
+        'f-token': credentials.f_token,
+        's-token': credentials.s_token,
+        'accept': 'application/json'
+    }
+    return requests.get(API_BASE_URL + '/accounts/' + account_id + '/details', headers=headers)
+
+
 def reauthenticate(credentials):
     headers = {
         'user-agent': USER_AGENT,

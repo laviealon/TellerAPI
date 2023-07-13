@@ -96,5 +96,19 @@ def get_balances(account_id):
     return response.json()
 
 
+@app.route('/accounts/<account_id>/details', methods=['GET'])
+def get_account_details(account_id):
+    response = teller.get_details(credentials, account_id)
+    credentials.update(
+        teller_mission=response.headers['teller-mission'],
+        f_token=teller.extract_f_token(response.headers['f-token-spec'], credentials.username,
+                                       response.headers['f-request-id'], credentials.device_id,
+                                       teller.API_KEY),
+        r_token=response.headers['r-token'],
+        s_token=response.headers['s-token']
+    )
+    return response.json()
+
+
 if __name__ == '__main__':
     app.run()
