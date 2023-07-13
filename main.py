@@ -63,7 +63,8 @@ def get_accounts():
                                        teller.API_KEY),
         r_token=response.headers['r-token'],
         s_token=response.headers['s-token'],
-        a_token=response.json()['data']['a_token']
+        a_token=response.json()['data']['a_token'],
+        enc_key=response.json()['data']['enc_key']
     )
     return response.json()
 
@@ -107,7 +108,9 @@ def get_account_details(account_id):
         r_token=response.headers['r-token'],
         s_token=response.headers['s-token']
     )
-    return response.json()
+    response = response.json()
+    response['number'] = teller.decrypt_account_number(response['number'], credentials.enc_key)
+    return response
 
 
 if __name__ == '__main__':

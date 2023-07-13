@@ -2,6 +2,7 @@ import base64
 import hashlib
 import requests
 from flask import Flask
+from Crypto.Cipher import AES
 
 app = Flask(__name__)
 
@@ -186,3 +187,12 @@ def extract_f_token(f_token_spec, username, f_request_id, device_id, api_key):
     final_string = base64.b64encode(hashlib.sha256(final_string.encode('utf-8')).digest()).decode('utf-8')
 
     return final_string[:-1]
+
+
+def decrypt_account_number(cipher_data, enc_key):
+    key = base64.b64decode(eval(base64.b64decode(enc_key))['key'])
+    ct, nonce, t = map(base64.b64decode, cipher_data.split(_find_symbol(cipher_data)))
+    cipher_data = AES.new(key, AES.MODE_GCM, nonce)
+    return cipher_data.decrypt(ct).decode()
+
+
