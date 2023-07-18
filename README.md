@@ -51,7 +51,7 @@ The test module can be run and modified to a user's needs. It provides a templat
 ## Design
 
 There are a few features of the application that are worth noting:
- - The ```Credentials``` class essentially acts as a session object, storing information about the user necessary for subsequent API calls, in order that the user does not have to make a complex request.
+ - The ```Credentials``` class essentially acts as a session object, storing information about the user necessary for subsequent API calls, in order that the user does not have to make a complex request. This renders the API not stateless (sacrilage) but this worth the tradeoff for various reasons, as explained above.
  - The ```teller_api``` module is a wrapper for the API calls, and is responsible for making the requests to the Teller API. It is also responsible for parsing the responses and returning the API responses to the user.
 
 ### Credentials Class - "We're All Adults Here"
