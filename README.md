@@ -8,7 +8,7 @@ using the [Flask](https://flask.palletsprojects.com/en/1.1.x/) framework.
 After forking the repository and installing dependencies, the application ```main.py``` can be run.
 
 The application will be available at http://localhost:5000, and this is the endpoint to which API calls should be made.
-Running the application instantiates a ```Credentials``` object for the session.
+Running the application instantiates a ```Credentials``` object for the session, rendering the API *not* stateless (this allows for a significantly smoother UX, saving the user from having to copy authentication data from the JSON responses and paste them into the new endpoint, so the tradeoff was worth it).
 
 ### Endpoints
 
