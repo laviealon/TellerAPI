@@ -46,7 +46,7 @@ The signin flow **must** be followed in order (```signin → mfa → verify → 
 
 ### Testing
 
-The test module can be run and provides the basic API calls.
+The test module can be run and modified to a user's needs. It provides a template for all of the basic API calls. 
 
 ## Design
 
