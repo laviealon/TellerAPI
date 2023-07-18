@@ -54,6 +54,10 @@ There are a few features of the application that are worth noting:
  - The ```Credentials``` class essentially acts as a session object, storing information about the user necessary for subsequent API calls, in order that the user does not have to make a complex request.
  - The ```teller_api``` module is a wrapper for the API calls, and is responsible for making the requests to the Teller API. It is also responsible for parsing the responses and returning the API responses to the user.
 
+### Credentials Class - "We're All Adults Here"
+
+The credentials class is designed to be maximally flexible, with zero eforcment of attribute types. The authentication data requried for different requests varies minimually, so for a small and simple API with a limited need for security a simple ```Credentials.update(self, **kwargs)``` was sufficient and most appropriate.
+
 
 
 
